@@ -223,7 +223,7 @@ children <- 1:ncasem
 for (icase in children) {
    hgt     <- hgtm[,icase]
    smoothList <-
-		smooth.monotone(age, hgt, wgt, growfdPar, zmat,
+		smooth.monotone(age, hgt, growfdPar,wgt, zmat,
 		                conv=0.001, dbglev=0)
    Wfd     <- smoothList$Wfdobj
    beta    <- smoothList$beta
@@ -248,7 +248,7 @@ children <- 1:ncasef
 for (icase in children) {
    hgt    <- hgtf[,icase]
    smoothList <-
-		smooth.monotone(age, hgt, wgt, growfdPar, zmat,
+		smooth.monotone(age, hgt, growfdPar,wgt, zmat,
 		                 conv=0.001, dbglev=0)
    Wfd     <- smoothList$Wfd
    beta    <- smoothList$beta
