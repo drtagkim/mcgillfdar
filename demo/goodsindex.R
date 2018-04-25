@@ -70,7 +70,7 @@ lognondursmthfd <- smooth.basis(durtime, lognondur, goodsfdPar)$fd
 
 durfine <- seq(1919,2000,0.025)
 lognondursmthvec <- eval.fd(durfine, lognondursmthfd)
- 
+
 #  smooth the data with smooth.Pspline.  This is fast, but
 #  does not produce a functional data object for the smooth.
 
@@ -95,17 +95,19 @@ lines(c(1966,1966),c(1.61,1.73),lty=2)
 #  at each year.  Use order 4 splines.
 
 longtermbasis <- create.bspline.basis(goodsrange, 83)
-
-longtermfit <- smooth.basis(lognondur, durtime, longtermbasis)$fd
+judge=tryCatch(longtermfit <- smooth.basis(lognondur, durtime, longtermbasis)$fd,error=function(e) FALSE,finally=function(f) TRUE)
 
 #  compute and plot seasonal trend
-
-seasonfit <- lognondur - eval.fd(durtime, longtermfit)
-
-plot(durtime, seasonfit, type="l", cex=1,
-     xlim=goodsrange, ylim=c(-0.08,0.08),
-     xlab="Year", ylab="Seasonal Trend")
-lines(goodsrange, c(0,0), lty=2)
+if(judge) {
+  seasonfit <- lognondur - eval.fd(durtime, longtermfit)
+  
+  plot(durtime, seasonfit, type="l", cex=1,
+       xlim=goodsrange, ylim=c(-0.08,0.08),
+       xlab="Year", ylab="Seasonal Trend")
+  lines(goodsrange, c(0,0), lty=2)  
+} else {
+  print("Esimating non-seasonal trend by smoothing with knot cannot be computed cause of assumption violation.")
+}
 
 #  plot a sine to illustrate kinetic and potential energy
 
@@ -113,7 +115,7 @@ tval <- seq(0,1,0.01)
 xval <- sin(2*pi*tval)
 
 plot(tval, xval, type="l", cex=1,
-	  xlab="Time", ylab="Horizontal Position")
+     xlab="Time", ylab="Horizontal Position")
 lines(c(0,1), c(0,0), lty=2)
 
 #  a phase-plane plot of the sine
@@ -125,7 +127,7 @@ plot(Dxval, D2xval, type="l",
      xlab="Velocity", ylab="Acceleration")
 lines(c(-2*pi,2*pi), c(0,0), lty=2) 
 lines(c(0,0), c(-(2*pi)^2,(2*pi)^2), lty=2)
- 
+
 #  ----------  phase-plane plots of the goods index  -------------------
 
 #  -----------------  1964  -----------------------
@@ -154,9 +156,7 @@ indj <- durfine >= x0 & durfine <= x0+1
 lines(D1f[indj], D2f[indj])
 indexc <-  1:12 
 for (k in 1:12) {
-    points(D1c[indexc[k]], D2c[indexc[k]])
-    text(D1c[indexc[k]]+0.05, D2c[indexc[k]]+0.5, monthlabs[k])
+  points(D1c[indexc[k]], D2c[indexc[k]])
+  text(D1c[indexc[k]]+0.05, D2c[indexc[k]]+0.5, monthlabs[k])
 }
 title(paste("Year", startyr + 1900))
-
-
